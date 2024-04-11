@@ -4,20 +4,22 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Categories;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::get('/', CategoriesController::class .'@index')->name('categories.index');
 
-Route::get('/categories/create', CategoriesController::class . '@create')->name('categories.create');
+Route::get('/', CategoriesController::class .'@index')->name('categories.index')->middleware('auth');
 
-Route::post('/categories', CategoriesController::class .'@store')->name('categories.store');
+Route::get('/categories/create', CategoriesController::class . '@create')->name('categories.create')->middleware('auth');
 
-Route::get('/categories/{id}', CategoriesController::class .'@show')->name('categories.show');
+Route::post('/categories', CategoriesController::class .'@store')->name('categories.store')->middleware('auth');
 
-Route::get('/categories/{id}/edit', CategoriesController::class .'@edit')->name('categories.edit');
+Route::get('/categories/{id}', CategoriesController::class .'@show')->name('categories.show')->middleware('auth');
 
-Route::put('/categories/{id}', CategoriesController::class .'@update')->name('categories.update');
+Route::get('/categories/{id}/edit', CategoriesController::class .'@edit')->name('categories.edit')->middleware('auth');
 
-Route::delete('/categories/{id}', CategoriesController::class .'@destroy')->name('categories.destroy');
+Route::put('/categories/{id}', CategoriesController::class .'@update')->name('categories.update')->middleware('auth');
+
+Route::delete('/categories/{id}', CategoriesController::class .'@destroy')->name('categories.destroy')->middleware('auth');
 
 
 
@@ -32,9 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-Route::resource('chirps', CategoriesController::class)
-
-    ->only(['index', 'store']);
+Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
+->name('logout');
 
 require __DIR__.'/auth.php';
