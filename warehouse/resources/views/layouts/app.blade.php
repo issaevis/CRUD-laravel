@@ -14,7 +14,7 @@
         <a class="navbar-brand h1" href="{{ route('categories.index') }}">CRUDcategories</a>
         <div class="justify-end ">
             <div class="col ">
-                <a class="btn btn-sm btn-success" href="{{ route('categories.create') }}">Add Post</a>
+                <a class="btn btn-sm btn-success" href="{{ route('categories.create') }}">Add Category</a>
                 <a class="btn btn-sm btn-success" href="{{ route('logout') }}">Log Out</a>
             </div>
         </div>
