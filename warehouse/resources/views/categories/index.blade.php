@@ -36,11 +36,7 @@ integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6
             class="btn btn-primary btn-sm">Edit</a>
                 </div>
                 <div class="col-sm">
-                    <form action="{{ route('categories.destroy', $category->id) }}" method="post">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                      <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="deleteCategory({{ $category->id }})">Delete</button>
                 </div>
               </div>
             </div>
@@ -49,5 +45,25 @@ integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6
       @endforeach
     </div>
   </div>
+  <!-- jQuery script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- AJAX script -->
+  <script>
+      function deleteCategory(categoryId) {
+          $.ajax({
+              url: "{{ route('categories.destroy', ['category' => ':categoryId']) }}".replace(':categoryId', categoryId),
+              type: "DELETE",
+              data: {
+                  "_token": "{{ csrf_token() }}"
+              },
+              success: function() {
+                  // Reload the page after successful deletion
+                  location.reload();
+              }
+          });
+      }
+  </script>
+
+
 </body>
 </html>

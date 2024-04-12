@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categories;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
@@ -12,7 +12,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Categories::all();
+        $categories = Category::all();
 
         return view('categories.index', compact('categories'));
     }
@@ -34,8 +34,8 @@ class CategoriesController extends Controller
             'title' => 'required'
         ]);
 
-        Categories::create($request->all());
-        
+        Category::create($request->all());
+
         return redirect()->route('categories.index')
       ->with('success', 'Category created successfully.');
     }
@@ -45,7 +45,7 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         return view('categories.show', compact('category'));
     }
@@ -55,7 +55,7 @@ class CategoriesController extends Controller
      */
     public function edit($id)
     {
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
         return view('categories.edit', compact('category'));
     }
 
@@ -68,7 +68,7 @@ class CategoriesController extends Controller
             'title' => 'required'
         ]);
 
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
         $category->update($request->all());
         return redirect()->route('categories.index')
       ->with('success', 'Category updated successfully.');
@@ -79,10 +79,10 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         $category->delete();
 
-        return(redirect('/'));
+        return response()->noContent();
     }
 }
