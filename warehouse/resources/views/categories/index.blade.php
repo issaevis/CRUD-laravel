@@ -38,7 +38,6 @@
                   "_token": "{{ csrf_token() }}"
               },
               success: function() {
-                  // Reload the page after successful deletion
                   location.reload();
               }
           });
