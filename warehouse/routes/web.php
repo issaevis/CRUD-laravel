@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', CategoriesController::class .'@index')->name('categories.index')->middleware('auth');
+
+Route::resource('categories',CategoriesController::class);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -16,5 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
+->name('logout');
 
 require __DIR__.'/auth.php';
