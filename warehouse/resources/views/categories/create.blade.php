@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container h-100 mt-5">
         <div class="row h-100 justify-content-center align-items-center">
@@ -12,7 +11,9 @@
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
                     <br>
-                    <button type="submit" class="btn btn-primary">Create Category</button>
+                    <button type="submit" class="btn btn-primary"
+                            style="display: block; margin-right: auto; margin-left: auto">Create Category
+                    </button>
                 </form>
             </div>
             @if ($errors->any())
