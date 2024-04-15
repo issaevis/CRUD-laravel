@@ -11,8 +11,7 @@
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
                     <br>
-                    <button type="submit" class="btn btn-primary"
-                            style="display: block; margin-right: auto; margin-left: auto">Create Category
+                    <button type="submit" class="btn btn-primary mx-auto d-block">Create Category
                     </button>
                 </form>
             </div>

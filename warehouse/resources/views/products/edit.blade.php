@@ -5,7 +5,7 @@
             <div class="col-10 col-md-8 col-lg-6">
                 <h2 style="text-align: center">Edit Product</h2>
                 @if ($errors->any())
-                    <div>
+                    <div class="alert alert-danger mt-2">
                         <ul>
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -35,16 +35,16 @@
                         <label for="category_id">Category:</label>
                         <select id="category_id" name="category_id" class="form-control">
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->title }}</option>
+                                <option
+                                    value="{{ $category->id }}" {{ $category->id == $product->category_id ? 'selected' : '' }}>
+                                    {{ $category->title }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     @csrf
                     <div>
-                        <button class="btn btn-primary"
-                                style="display: block; margin-top: 5px; margin-right: auto; margin-left: auto"
-                                type="submit">Edit
-                        </button>
+                        <button class="btn btn-primary mx-auto d-block" type="submit">Edit</button>
                     </div>
                 </form>
 @stop

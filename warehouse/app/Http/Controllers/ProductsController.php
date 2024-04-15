@@ -9,7 +9,6 @@ use Illuminate\Validation\Rule;
 
 class ProductsController extends Controller
 {
-
     public function index()
     {
         $products = Product::all();
@@ -30,7 +29,9 @@ class ProductsController extends Controller
             'price' => 'required',
             'category_id' => 'required|exists:categories,id',
         ]);
+
         Product::create($request->all());
+
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');
     }
@@ -45,6 +46,7 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         $categories = Category::all();
+
         return view('products.edit', compact('product', 'categories'));
     }
 
@@ -59,8 +61,10 @@ class ProductsController extends Controller
             'price' => 'required',
             'category_id' => 'required|exists:categories,id',
         ]);
+
         $product = Product::findOrFail($id);
         $product->update($request->all());
+
         return redirect()->route('products.index')
             ->with('success', 'Product updated successfully.');
     }
@@ -69,6 +73,7 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
+
         return response()->noContent();
     }
 }

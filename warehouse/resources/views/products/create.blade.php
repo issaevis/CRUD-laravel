@@ -5,7 +5,7 @@
             <div class="col-10 col-md-8 col-lg-6">
                 <h2 style="text-align: center">Create Product</h2>
                 @if ($errors->any())
-                    <div>
+                    <div class="alert alert-danger mt-2">
                         <ul>
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -37,10 +37,7 @@
                     </div>
                     @csrf
                     <div>
-                        <button class="btn btn-primary"
-                                style="display: block; margin-top: 5px; margin-right: auto; margin-left: auto"
-                                type="submit">Create
-                        </button>
+                        <button class="btn btn-primary mx-auto d-block" type="submit">Create</button>
                     </div>
                 </form>
 @stop

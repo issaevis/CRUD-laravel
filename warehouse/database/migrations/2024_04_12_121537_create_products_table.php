@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->integer('quantity');
             $table->float('price');
             $table->unsignedBigInteger('category_id');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

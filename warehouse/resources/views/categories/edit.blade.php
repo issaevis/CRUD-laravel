@@ -12,7 +12,7 @@
                         <input type="text" class="form-control" id="title" name="title"
                                value="{{ $category->title }}" required>
                     </div>
-                    <button type="submit" class="btn mt-3 btn-primary">Update Category</button>
+                    <button type="submit" class="btn mt-3 btn-primary mx-auto d-block">Update Category</button>
                 </form>
             </div>
             @if ($errors->any())
