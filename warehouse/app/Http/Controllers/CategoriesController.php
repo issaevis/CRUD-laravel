@@ -3,11 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CategoriesController extends Controller
 {
-
     public function index()
     {
         $categories = Category::all();
@@ -24,7 +22,9 @@ class CategoriesController extends Controller
         $request->validate([
             'title' => 'required|unique:categories',
         ]);
+
         Category::create($request->all());
+
         return redirect()->route('categories.index')
             ->with('success', 'Category created successfully.');
     }
@@ -44,13 +44,12 @@ class CategoriesController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'title' => [
-                'required',
-                Rule::unique('categories')->ignore($id),
-            ],
+            'title' => 'required|unique:categories,title,' . $id,
         ]);
+
         $category = Category::findOrFail($id);
         $category->update($request->all());
+
         return redirect()->route('categories.index')
             ->with('success', 'Category updated successfully.');
     }
@@ -59,6 +58,7 @@ class CategoriesController extends Controller
     {
         $category = Category::findOrFail($id);
         $category->delete();
+
         return response()->noContent();
     }
 }
