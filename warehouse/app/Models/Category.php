@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'title',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
