@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ProductsController extends Controller
 {
@@ -53,10 +52,7 @@ class ProductsController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => [
-                'required',
-                Rule::unique('products')->ignore($id),
-            ],
+            'name' => 'required|unique:products,name,'.$id,
             'quantity' => 'required',
             'price' => 'required',
             'category_id' => 'required|exists:categories,id',
