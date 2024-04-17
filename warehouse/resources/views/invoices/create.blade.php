@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container h-100 mt-5">
         <div class="row h-100 justify-content-center align-items-center">
@@ -7,7 +6,6 @@
                 <h3 class="text-center mb-4">Add an Invoice</h3>
                 <form action="{{ route('invoices.store') }}" method="post">
                     @csrf
-
 
                     <div class="form-group">
                         <label for="title">Title</label>
@@ -31,15 +29,16 @@
                         <div class="product-field">
                             <div class="form-group">
                                 <label for="product">Select Product</label>
-                                <select class="form-control" name="products[]">
+                                <select class="form-control" name="product_id[]">
                                     @foreach ($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
-                                <input type="number" class="form-control" name="quantities[]" min="1" value="1">
+                                <input type="number" class="form-control" name="quantity[]" min="1" value="1">
                             </div>
                         </div>
                     </div>
@@ -72,11 +71,11 @@
             var productField = document.createElement('div');
             productField.classList.add('product-field');
 
-            var productSelect = document.querySelector('.product-field select[name="products[]"]').cloneNode(true);
-            productSelect.name = 'products[]';
+            var productSelect = document.querySelector('.product-field select[name="product_id[]"]').cloneNode(true);
+            productSelect.name = 'product_id[]';
 
-            var quantityInput = document.querySelector('.product-field input[name="quantities[]"]').cloneNode(true);
-            quantityInput.name = 'quantities[]';
+            var quantityInput = document.querySelector('.product-field input[name="quantity[]"]').cloneNode(true);
+            quantityInput.name = 'quantity[]';
 
             var productLabel = document.createElement('label');
             productLabel.textContent = 'Select Product';

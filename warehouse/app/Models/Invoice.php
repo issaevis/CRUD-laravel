@@ -10,7 +10,7 @@ class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title','type','description','products','image'];
+    protected $fillable = ['title','type','description','product_id','quantity','image'];
 
     public function products()
     {
