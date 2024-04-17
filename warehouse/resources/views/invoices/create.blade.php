@@ -28,8 +28,8 @@
                     <div id="product-fields">
                         <div class="product-field">
                             <div class="form-group">
-                                <label for="product">Select Product</label>
-                                <select class="form-control" name="product_id[]">
+                                <label for="products">Select Product</label>
+                                <select class="form-control" name="products[]">
                                     @foreach ($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->name }}</option>
                                     @endforeach

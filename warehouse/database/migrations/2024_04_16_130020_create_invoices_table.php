@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('type');
             $table->string('description')->nullable();
-            $table->string('product_id');
             $table->unsignedInteger('quantity');
             $table->string('image');
             $table->timestamps();
