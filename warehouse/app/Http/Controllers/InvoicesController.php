@@ -28,7 +28,7 @@ class InvoicesController extends Controller
             'title' => 'required|unique:invoices',
             'type' => 'required',
             'description' => 'max:255',
-            'quantity' => ['required', new QuantityCheck($request->input('products'), $request->input('quantity'))],
+            'quantity' => ['required', new QuantityCheck($request->input('products'), $request->input('quantity'), $request->input('type'))],
             'invoice_number' => 'unique:invoices',
             'image' => 'required|file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -36,33 +36,32 @@ class InvoicesController extends Controller
         $invoiceNumber = 'INV-' . Str::random(12);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->storeAs('public/images', $request->file('image')->hashName());
+            $imagePath = $request->file('image')->storeAs('images', $request->file('image')->hashName(), 'public');
         }
-
         $invoice = [
             'invoice_number' => $invoiceNumber,
             'title' => $request->input('title'),
             'type' => $request->input('type'),
             'description' => $request->input('description'),
-            'image' => $imagePath,
+            'image' => '/storage/' . $imagePath,
         ];
 
         $createdInvoice = Invoice::create($invoice);
+        $index = 0;
 
         foreach ($request->input('products') as $productId) {
             $product = Product::find($productId);
             if ($product) {
-                if ($createdInvoice->type == Invoice::BUY) {
-                    $product->quantity -= $request->input('quantity')[$productId];
-                } elseif ($createdInvoice->type == Invoice::SELL) {
-                    $product->quantity += $request->input('quantity')[$productId];
-                }
+                $quantityChange = ($createdInvoice->type == Invoice::BUY)
+                    ? -$request->input('quantity')[$index]
+                    : $request->input('quantity')[$index];
 
+                $product->quantity += $quantityChange;
                 $product->save();
 
-                $quantity = $request->input('quantity')[$productId];
-                $createdInvoice->products()->attach($product, ['quantity' => $quantity]);
+                $createdInvoice->products()->attach($product, ['quantity' => $quantityChange]);
             }
+            $index++;
         }
         return redirect()->route('invoices.index')
             ->with('success', 'Invoice created successfully.');
@@ -85,29 +84,43 @@ class InvoicesController extends Controller
 
     public function update(Request $request, $id)
     {
+        $invoice = Invoice::findOrFail($id);
+
         $request->validate([
-            'title' => 'required|unique:invoices',
+            'title' => 'required|unique:invoices,title,' . $id,
             'type' => 'required',
             'description' => 'max:255',
-            'quantity' => 'required|min:1',
-            'invoice_number' => 'unique:invoices',
-            'image' => 'required|file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'quantity' => ['required', new QuantityCheck($request->input('products'), $request->input('quantity'))],
+            'invoice_number' => 'unique:invoices,invoice_number,' . $id,
+            'image' => 'file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $invoice = Invoice::findOrFail($id);
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->storeAs('images', $request->file('image')->hashName(), 'public');
+            $invoice->image = '/storage/' . $imagePath;
+        }
 
+        $invoice->title = $request->input('title');
+        $invoice->type = $request->input('type');
+        $invoice->description = $request->input('description');
+        $invoice->save();
 
-        $invoice->update($request->all());
+        $index = 0;
+        foreach ($request->input('products') as $productId) {
+            $product = Product::find($productId);
+            if ($product) {
+                if ($invoice->type == Invoice::BUY) {
+                    $product->quantity -= $request->input('quantity')[$index];
+                } elseif ($invoice->type == Invoice::SELL) {
+                    $product->quantity += $request->input('quantity')[$index];
+                }
+                $product->save();
+                $quantity = $request->input('quantity')[$index];
+                $invoice->products()->syncWithoutDetaching([$product->id => ['quantity' => $quantity]]);
+            }
+            $index++;
+        }
 
-        return redirect()->route('invoices.index')
-            ->with('success', 'Invoice updated successfully.');
-    }
-
-    public function destroy($id)
-    {
-        $invoice = Invoice::findOrFail($id);
-        $invoice->delete();
-
-        return response()->noContent();
+        return redirect()->route('invoices.index')->with('success', 'Invoice updated successfully.');
     }
 }

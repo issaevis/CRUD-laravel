@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container">
         <div class="row">
@@ -15,6 +14,7 @@
                         <th>Description</th>
                         <th>Image</th>
                         <th>Products</th>
+                        <th>Quantity</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -24,25 +24,36 @@
                             <td>{{ $invoice->id }}</td>
                             <td>{{ $invoice->invoice_number }}</td>
                             <td>{{ $invoice->title }}</td>
-                            <td>{{ $invoice->type }}</td>
+                            <td>{{ strtoupper($invoice->type) }}</td>
                             <td>{{ $invoice->description }}</td>
                             <td>
                                 @if($invoice->image)
-                                    <img src="{{ asset($invoice->image) }}" alt="Invoice Image" style="max-width: 100px; max-height: 100px;">
+                                    <a href="{{ asset($invoice->image) }}" class="d-block"><img src="{{ asset($invoice->image) }}" alt="Invoice Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;"></a>
                                 @else
                                     No Image
                                 @endif
                             </td>
                             <td>
-                                <ul>
+                                <ol>
                                     @foreach($invoice->products as $product)
-                                        <li>{{ $product->name }} (Quantity: {{ $invoice->quantity }})</li>
+                                        <li>{{ $product->name }}</li>
                                     @endforeach
-                                </ul>
+                                </ol>
                             </td>
                             <td>
-                                <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-primary">Edit</a>
-                                <button class="btn btn-danger" onclick="deleteInvoice({{ $invoice->id }})">Delete</button>
+                                <ol>
+                                    @foreach($invoice->products as $product)
+                                        <li>{{ $product->pivot->quantity }}x</li> <!-- Access the quantity attribute from the pivot table -->
+                                    @endforeach
+                                </ol>
+                            </td>
+                            <td>
+                                <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-primary ">Edit</a>
+                                <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger delete-btn">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -51,27 +62,27 @@
             </div>
         </div>
     </div>
-@endsection
 
-@section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        function deleteInvoice(invoiceId) {
-            if (confirm("Are you sure you want to delete this invoice?")) {
-                $.ajax({
-                    url: "{{ route('invoices.destroy', ['invoice' => ':invoiceId']) }}".replace(':invoiceId', invoiceId),
-                    type: "DELETE",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
-                    success: function () {
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            }
-        }
+        $(document).ready(function() {
+            $('.delete-btn').click(function(event) {
+                event.preventDefault();
+                if (confirm("Are you sure you want to delete this invoice?")) {
+                    var form = $(this).closest('form');
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: form.serialize(),
+                        success: function () {
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
     </script>
-@endsection
+@stop

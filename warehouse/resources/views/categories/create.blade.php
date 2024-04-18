@@ -10,9 +10,14 @@
                         <label for="title">Title</label>
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary mx-auto d-block">Create Category
-                    </button>
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary btn-block">Add Product</button>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary btn-block">Create Invoice</button>
+                        </div>
+                    </div>
                 </form>
             </div>
             @if ($errors->any())
