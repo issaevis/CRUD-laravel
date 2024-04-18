@@ -10,10 +10,13 @@ class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title','type','description','product_id','quantity','image'];
+    protected $fillable = ['invoice_number', 'title','type','description','image'];
+
+    const BUY = 'buy';
+    const SELL = 'sell';
 
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->withPivot('quantity');
     }
 }

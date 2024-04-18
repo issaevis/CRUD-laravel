@@ -1,10 +1,11 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="container h-100 mt-5">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-10 col-md-8 col-lg-6">
                 <h3 class="text-center mb-4">Add an Invoice</h3>
-                <form action="{{ route('invoices.store') }}" method="post">
+                <form action="{{ route('invoices.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group">
@@ -28,7 +29,7 @@
                     <div id="product-fields">
                         <div class="product-field">
                             <div class="form-group">
-                                <label for="products">Select Product</label>
+                                <label for="product">Select Product</label>
                                 <select class="form-control" name="products[]">
                                     @foreach ($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->name }}</option>
@@ -44,7 +45,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="Image">Image</label>
+                        <label for="image">Image</label>
                         <input type="file" class="form-control" id="image" name="image" required>
                     </div>
 
@@ -71,8 +72,8 @@
             var productField = document.createElement('div');
             productField.classList.add('product-field');
 
-            var productSelect = document.querySelector('.product-field select[name="product_id[]"]').cloneNode(true);
-            productSelect.name = 'product_id[]';
+            var productSelect = document.querySelector('.product-field select[name="products[]"]').cloneNode(true);
+            productSelect.name = 'products[]';
 
             var quantityInput = document.querySelector('.product-field input[name="quantity[]"]').cloneNode(true);
             quantityInput.name = 'quantity[]';

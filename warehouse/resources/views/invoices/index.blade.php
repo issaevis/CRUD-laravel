@@ -15,6 +15,7 @@
                         <th>Description</th>
                         <th>Image</th>
                         <th>Products</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -39,6 +40,10 @@
                                     @endforeach
                                 </ul>
                             </td>
+                            <td>
+                                <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-primary">Edit</a>
+                                <button class="btn btn-danger" onclick="deleteInvoice({{ $invoice->id }})">Delete</button>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -46,4 +51,27 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function deleteInvoice(invoiceId) {
+            if (confirm("Are you sure you want to delete this invoice?")) {
+                $.ajax({
+                    url: "{{ route('invoices.destroy', ['invoice' => ':invoiceId']) }}".replace(':invoiceId', invoiceId),
+                    type: "DELETE",
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        }
+    </script>
 @endsection

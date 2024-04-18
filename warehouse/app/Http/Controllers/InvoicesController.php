@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\QuantityCheck;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Invoice;
+use Illuminate\Support\Str;
 
 class InvoicesController extends Controller
 {
@@ -26,45 +28,45 @@ class InvoicesController extends Controller
             'title' => 'required|unique:invoices',
             'type' => 'required',
             'description' => 'max:255',
-            'quantity' => 'required',
-            'image' => '',
+            'quantity' => ['required', new QuantityCheck($request->input('products'), $request->input('quantity'))],
+            'invoice_number' => 'unique:invoices',
+            'image' => 'required|file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $invoice = new Invoice();
-        $invoice->invoice_number = rand();
-        $invoice->title = $request->input('title');
-        $invoice->type = $request->input('type');
-        $invoice->description = $request->input('description');
-        $invoice->quantity = $request->input('quantity')[0];
-        $invoice->image = $request->input('image');
-        $invoice->save();
+        $invoiceNumber = 'INV-' . Str::random(12);
 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->storeAs('public/images', $request->file('image')->hashName());
+        }
 
+        $invoice = [
+            'invoice_number' => $invoiceNumber,
+            'title' => $request->input('title'),
+            'type' => $request->input('type'),
+            'description' => $request->input('description'),
+            'image' => $imagePath,
+        ];
+
+        $createdInvoice = Invoice::create($invoice);
 
         foreach ($request->input('products') as $productId) {
             $product = Product::find($productId);
             if ($product) {
-                $quantity = $request->input('quantity')[0] ?? 1; // Default to 1 if quantity not provided
-
-                if ($invoice->type == 'buy' && $product->quantity < $quantity) {
-                    $invoice->delete();
-                    return response()->json(['error' => 'Insufficient quantity for product ' . $product->name], 400);
-                }
-
-                if ($invoice->type == 'buy') {
-                    $product->quantity -= $quantity;
-                } else {
-                    $product->quantity += $quantity;
+                if ($createdInvoice->type == Invoice::BUY) {
+                    $product->quantity -= $request->input('quantity')[$productId];
+                } elseif ($createdInvoice->type == Invoice::SELL) {
+                    $product->quantity += $request->input('quantity')[$productId];
                 }
 
                 $product->save();
 
-                $invoice->products()->attach($product);
+                $quantity = $request->input('quantity')[$productId];
+                $createdInvoice->products()->attach($product, ['quantity' => $quantity]);
             }
         }
         return redirect()->route('invoices.index')
             ->with('success', 'Invoice created successfully.');
-        }
+    }
 
     public function show($id)
     {
@@ -87,11 +89,14 @@ class InvoicesController extends Controller
             'title' => 'required|unique:invoices',
             'type' => 'required',
             'description' => 'max:255',
-            'product_id' => 'required|exists:products,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'quantity' => 'required|min:1',
+            'invoice_number' => 'unique:invoices',
+            'image' => 'required|file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $invoice = Invoice::findOrFail($id);
+
+
         $invoice->update($request->all());
 
         return redirect()->route('invoices.index')

@@ -10,11 +10,10 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('invoice_number');
+            $table->string('invoice_number')->unique();
             $table->string('title');
             $table->string('type');
             $table->string('description')->nullable();
-            $table->unsignedInteger('quantity');
             $table->string('image');
             $table->timestamps();
             $table->softDeletes();
