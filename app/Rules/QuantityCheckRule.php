@@ -2,11 +2,12 @@
 
 namespace App\Rules;
 
+use App\Models\Invoice;
 use Closure;
 use App\Models\Product;
 use Illuminate\Contracts\Validation\Rule;
 
-class QuantityCheck implements Rule
+class QuantityCheckRule implements Rule
 {
     protected $productIds;
     protected $quantities;
@@ -35,11 +36,11 @@ class QuantityCheck implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->typeOf == 'buy') {
+        if ($this->typeOf == Invoice::BUY) {
             foreach ($this->productIds as $key => $productId) {
                 $quantity = $this->quantities[$key];
                 $product = Product::find($productId);
-                if ($quantity > $product->quantity) {
+                if ($quantity > $product->quantity && $quantity <= 0) {
                     return false;
                 }
             }
