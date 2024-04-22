@@ -28,7 +28,9 @@
                             <td>{{ $invoice->description }}</td>
                             <td>
                                 @if($invoice->image)
-                                    <a href="{{ asset($invoice->image) }}" class="d-block"><img src="{{ asset($invoice->image) }}" alt="Invoice Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;"></a>
+                                    <a href="{{ asset('storage/images/' . $invoice->image) }}" class="d-block">
+                                        <img src="{{ asset('storage/images/' . $invoice->image) }}" alt="Invoice Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                    </a>
                                 @else
                                     No Image
                                 @endif
@@ -43,7 +45,7 @@
                             <td>
                                 <ol>
                                     @foreach($invoice->products as $product)
-                                        <li>{{ $product->pivot->quantity }}x</li> <!-- Access the quantity attribute from the pivot table -->
+                                        <li>{{ $product->pivot->quantity }}x</li>
                                     @endforeach
                                 </ol>
                             </td>

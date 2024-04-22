@@ -6,12 +6,13 @@ use App\Models\Invoice;
 use Closure;
 use App\Models\Product;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class QuantityCheckRule implements Rule
 {
     protected $productIds;
     protected $quantities;
-    protected $typeOf;
+    protected $type;
 
     /**
      * Create a new rule instance.
@@ -20,11 +21,12 @@ class QuantityCheckRule implements Rule
      * @param array $quantities
      * @return void
      */
-    public function __construct(array $productIds, array $quantities, string $typeOf)
+    public function __construct(array $productIds, array $quantities, string $type)
     {
         $this->productIds = $productIds;
         $this->quantities = $quantities;
-        $this->typeOf = $typeOf;
+        $this->type = $type;
+
     }
 
     /**
@@ -36,13 +38,16 @@ class QuantityCheckRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->typeOf == Invoice::BUY) {
-            foreach ($this->productIds as $key => $productId) {
-                $quantity = $this->quantities[$key];
-                $product = Product::find($productId);
-                if ($quantity > $product->quantity && $quantity <= 0) {
-                    return false;
-                }
+
+        if ($this->type === 'buy') {
+            return true;
+        }
+
+        foreach ($this->productIds as $key => $productId) {
+            $quantity = $this->quantities[$key];
+            $product = Product::findOrFail($productId);
+            if ($quantity > $product->quantity || $quantity <= 0) {
+                return false;
             }
         }
         return true;

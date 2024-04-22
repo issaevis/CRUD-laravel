@@ -11,11 +11,8 @@
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col mt-1">
                             <button type="submit" class="btn btn-primary btn-block">Add Product</button>
-                        </div>
-                        <div class="col">
-                            <button type="submit" class="btn btn-primary btn-block">Create Invoice</button>
                         </div>
                     </div>
                 </form>
