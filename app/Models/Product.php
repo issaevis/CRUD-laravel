@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
-    
+
     protected $fillable = ['name', 'quantity', 'price', 'category_id'];
 
     public function category()
@@ -22,4 +22,8 @@ class Product extends Model
         return $this->category->title ?? '';
     }
 
+    public function invoice()
+    {
+        return $this->belongsToMany(Invoice::class)->withPivot('quantity');
+    }
 }

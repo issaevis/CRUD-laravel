@@ -14,6 +14,7 @@
         <a class="navbar-brand h1" href="{{ route('dashboard') }}">CRUD-DY</a>
         <div class="justify-end ">
             <div class="col ">
+                <a class="btn btn-sm btn-success" href="{{ route('invoices.create') }}">Add Invoice</a>
                 <a class="btn btn-sm btn-success" href="{{ route('categories.create') }}">Add Category</a>
                 <a class="btn btn-sm btn-success" href="{{ route('products.create')  }}">Add Product</a>
                 <a class="btn btn-sm btn-success" href="{{ route('logout') }}">Log Out</a>
